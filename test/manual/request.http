@@ -1,0 +1,15 @@
+GET http://localhost:5000/health HTTP/1.1
+
+###
+
+GET http://localhost:5000/segment/amount HTTP/1.1
+content-type: application/json
+
+{
+    "customer_id": 123,
+    "country_code": "Peru",
+    "last_order_ts": "2018-05-03 00:00:00",
+    "first_order_ts": "2017-05-03 00:00:00",
+    "total_orders": 15,
+    "segment_name": "frequency_segment"
+}
