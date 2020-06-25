@@ -12,11 +12,10 @@ import pandas as pd
 
 default_args = {
     'owner': 'Nikita',
-    'start_date': days_ago(2),
+    'start_date': datetime.now(),
     'retries': 1,
     'retry_delay': timedelta(seconds=30),
-    'depends_on_past': False,
-    'max_active_runs': 1
+    'depends_on_past': False
 }
 
 voucher_connection_id = 'voucher_connection'
@@ -92,6 +91,8 @@ dag = DAG(
     default_args=default_args,
     catchup=False,
     description='A DAG which setup values for all ranges',
+    max_active_runs=1,
+    concurrency=1,
     schedule_interval=timedelta(days=1) # the job should be run daily to get updated segments values
 )
 
@@ -195,11 +196,6 @@ populate_segments = PythonOperator(
     python_callable=populate_segments,
     dag=dag)
 
-cleanup = BashOperator(
-    task_id='cleanup',
-    bash_command='rm /usr/local/airflow/validated.data.parquet.gzip',
-    dag=dag,
-)
 
 
-create_connection >> validation_operator >> populate_segments >> cleanup
+create_connection >> validation_operator >> populate_segments
