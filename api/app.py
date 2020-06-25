@@ -25,7 +25,7 @@ def get_segment_amount():
         # get amount for a specific segment
         amount = get_voucher_amount(customer.segment_name, segment_range)
 
-        return jsonify({'vocher_amount': amount})
+        return jsonify({'voucher_amount': amount})
     except Exception as e:
         logger.error('Something went wrong')
         logger.error(e)

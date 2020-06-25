@@ -15,7 +15,8 @@ default_args = {
     'start_date': days_ago(2),
     'retries': 1,
     'retry_delay': timedelta(seconds=30),
-    'depends_on_past': False
+    'depends_on_past': False,
+    'max_active_runs': 1
 }
 
 voucher_connection_id = 'voucher_connection'
