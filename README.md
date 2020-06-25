@@ -8,3 +8,4 @@ To run Voucher api:
     You can either do it manually in [Airflow UI](http://localhost:8080/admin/airflow/graph?dag_id=voucher_calculation) or ~~execute `airflow.trigger-dag`~~(for some reason the `cli` in this docker image doesn't behave properly).
 5. Wait until the dag is done.(Maybe check the UI [here](http://localhost:8080/admin/airflow/graph?dag_id=voucher_calculation))
 6. Make a test request by executing `make api.send-test-request`. The amount should be different from 0.
+7. To shutdown everything you can execute `make down`.
