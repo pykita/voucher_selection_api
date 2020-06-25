@@ -4,6 +4,14 @@ services:
     build: api
     ports:
       - 5000:5000
+    depends_on:
+      - database
+    environment:
+      POSTGRES_PASSWORD: voucher
+      POSTGRES_USER: voucher
+      POSTGRES_DB: voucher
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
   database:
     image: postgres:12
     environment:
@@ -12,6 +20,36 @@ services:
       POSTGRES_DB: voucher
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./pg_data:/var/lib/postgresql/data/pgdata
+      - ./pg_data:/var/lib/postgresql/data/pgdata # the data is stored here
+      - ./sql:/docker-entrypoint-initdb.d # to execute the init script
     ports:
       - 5433:5432
+  airflow:
+    image: puckel/docker-airflow:1.10.9
+    restart: always
+    depends_on:
+      - database
+    environment:
+      LOAD_EX: n
+      EXECUTOR: Local
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: voucher
+      POSTGRES_PASSWORD: voucher
+      POSTGRES_DB: voucher
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./pipeline/dags:/usr/local/airflow/dags # mapping the dags
+      - ./pipeline/requirements.txt:/requirements.txt # the way to install airflow dags dependencies
+      - ./pipeline/data.parquet.gzip:/usr/local/airflow/data.parquet.gzip
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3

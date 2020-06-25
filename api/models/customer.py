@@ -11,6 +11,7 @@ class Customer(BaseModel):
     last_order_ts: datetime
     total_orders: PositiveInt
     segment_name: str
+    now_ts: datetime # in order to have more beautiful results we setup datetime.utcnow()
 
     _segments = {
         'frequency_segment': {
@@ -33,7 +34,7 @@ class Customer(BaseModel):
         if self.segment_name == 'frequency_segment':
             segment_value = self.total_orders
         elif self.segment_name == 'recency_segment':
-            segment_value = (last_order_ts - first_order_ts).days
+            segment_value = (self.now_ts - self.last_order_ts).days
 
         for key, condition in self._segments[self.segment_name].items():
             if condition(segment_value):
