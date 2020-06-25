@@ -19,6 +19,9 @@ db.logs.follow:
 airflow.up:
 	docker-compose up -d airflow
 
+airflow.logs.follow:
+	docker-compose logs -f airflow
+
 airflow.trigger-dag:
 	docker-compose exec airflow airflow unpause voucher_calculation
 	docker-compose exec airflow airflow trigger_dag voucher_calculation
